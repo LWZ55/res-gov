@@ -1,18 +1,28 @@
 package com.htsx.resgov.config;
 
 
+import com.htsx.resgov.entity.User;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.beans.PropertyVetoException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * 数据库配置类
  */
 @Configuration
 public class DataSourceConfiguration {
+
+    static final Logger logger = LoggerFactory.getLogger(DataSourceConfiguration.class);
 
     @Value("${jdbc.driver}")
     private String jdbcDriver;
@@ -23,6 +33,9 @@ public class DataSourceConfiguration {
     @Value("${jdbc.password}")
     private String jdbcPassword;
 
+
+
+
     @Bean(name = "dataSouce")
     public ComboPooledDataSource createDataSouce() throws PropertyVetoException {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
@@ -32,6 +45,27 @@ public class DataSourceConfiguration {
         dataSource.setPassword(jdbcPassword);
         //关闭连接后不自动commit
         dataSource.setAutoCommitOnClose(false);
+        return dataSource;
+    }
+
+
+
+
+
+    public ComboPooledDataSource createDataSouce(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword) {
+
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        jdbcUrl = jdbcDriver + "serverTimezone=CTT";
+        try {
+            dataSource.setDriverClass(jdbcDriver);
+            dataSource.setJdbcUrl(jdbcUrl);
+            dataSource.setUser(jdbcUsername);
+            dataSource.setPassword(jdbcPassword);
+            //关闭连接后不自动commit
+            dataSource.setAutoCommitOnClose(false);
+        } catch (Exception e) {
+            logger.error(jdbcUrl + "connect fails", e);
+        }
         return dataSource;
     }
 }

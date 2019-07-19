@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.htsx.resgov.dao.TestDao">
+<!--    namespace对应接口-->
     <!-- 根据主键查询-->
     <select id="getById" resultType="com.htsx.resgov.entity.TestEntity" parameterType="java.lang.Integer" >
         select  *
