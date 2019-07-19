@@ -1,6 +1,6 @@
 package com.htsx.resgov.entity;
 
-public interface XFields {
+public interface XStepFields {
 
     int systemType=100;
 

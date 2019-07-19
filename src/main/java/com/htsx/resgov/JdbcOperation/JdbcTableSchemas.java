@@ -21,7 +21,7 @@ public class JdbcTableSchemas {
     private Connection connection;
 
     @Autowired
-    private DatabaseMetaData dbMetaData;
+    private static DatabaseMetaData dbMetaData;
 
 
     @Bean
@@ -44,7 +44,7 @@ public class JdbcTableSchemas {
 
     //找到数据库某个表的某个列的约束
     //只针对单个表：{列名：{约束名：约束值}}
-    public Map<String, Map<String, String>> getTableAllColumnsSchemas(String tableNamePattern, String columnNamePattern) throws Exception {
+    public static Map<String, Map<String, String>> getTableAllColumnsSchemas(String tableNamePattern, String columnNamePattern) throws Exception {
         Map<String, Map<String, String>> fieldsSchemas = new HashMap<>();
 
         ResultSet rs = dbMetaData.getColumns(null, "%", tableNamePattern, columnNamePattern);
@@ -58,6 +58,21 @@ public class JdbcTableSchemas {
         }
         return fieldsSchemas;
     }
+
+    public static Map<String, String> getTableOneColumnSchemas(String tableNamePattern, String columnNamePattern) throws Exception {
+        Map<String, String> fieldSchemas = new HashMap<>();
+
+        ResultSet rs = dbMetaData.getColumns(null, "%", tableNamePattern, columnNamePattern);
+
+        fieldSchemas.put("type", rs.getString("TYPE_NAME"));
+        fieldSchemas.put("size", rs.getString("COLUMN_SIZE"));
+        fieldSchemas.put("remarks", rs.getString("REMARKS"));
+        fieldSchemas.put("is_nullable", rs.getString("IS_NULLABLE"));
+
+
+        return fieldSchemas;
+    }
+
 
     //find unique key,including primary key
     //{联合索引名：（组成联合索引的各索引列表）}

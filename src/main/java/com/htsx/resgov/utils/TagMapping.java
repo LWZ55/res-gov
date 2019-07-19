@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class TagMapping {
 
-    public String getTableNameByClassId(String classId){
+    public static String getTableNameByClassId(String classId){
         String tableName = null;
         //to do 数据库查询
         return tableName;
@@ -16,7 +16,7 @@ public class TagMapping {
 
     //确保能获取tableName再执行
     //return {tag,fields}
-    public Map<Integer,String> getColumnsByTags(HashMap<Integer,String> oneRecordMap){
+    public static Map<Integer,String> getColumnsByTags(HashMap<Integer,String> oneRecordMap){
         Set<Integer> tagSet = oneRecordMap.keySet();
         Map<Integer,String > res = new HashMap<>();
 
