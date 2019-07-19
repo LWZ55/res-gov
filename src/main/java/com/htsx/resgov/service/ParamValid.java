@@ -52,6 +52,7 @@ public class ParamValid implements IParamValid, XStepFields {
 
     public String getTypesFromString(String fieldVal) {
         String type = null;
+
         return type;
     }
 
