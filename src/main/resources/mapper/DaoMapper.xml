@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.htsx.resgov.dao.TestDao">
+    <!--    namespace对应接口-->
+    <!-- 根据主键查询-->
+    <select id="getById" resultType="com.htsx.resgov.entity.TestEntity" parameterType="java.lang.Integer">
+        select  *
+        from test
+        where id = #{id}
+    </select>
+
+    <select id="getByTableNameAndTag" resultType="java.lang.String" parameterType="map">
+         select columnName
+         from #{tableName}
+         where tag = #{tag}
+    </select>
+
+    <select id="getBySysNameAndClassId" resultType="java.lang.String" parameterType="map">
+         select tableName
+         from #{sysName}
+         where classId = #{classId}
+    </select>
+
+    <select id="getUniqueKeyValCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+         select count(0)
+         from #{tableName}
+         where
+         <foreach collection="indexMap" index="index" item = "item" open="(" separator="," close=")">
+         #{index} = #{item}
+         </foreach>
+    </select>
+
+</mapper>

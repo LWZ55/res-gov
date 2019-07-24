@@ -1,6 +1,9 @@
 package com.htsx.resgov.entity;
 
 
+import lombok.Data;
+
+@Data
 public class TestEntity {
 
     protected Integer id ;
@@ -11,35 +14,5 @@ public class TestEntity {
 
     protected String lastName ;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getMagicId() {
-        return magicId;
-    }
-
-    public void setMagicId(String magicId) {
-        this.magicId = magicId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }
