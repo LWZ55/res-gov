@@ -3,11 +3,13 @@ package com.htsx.resgov.paramcheck;
 import com.htsx.resgov.JdbcUtil.TableInfoHelper;
 import com.htsx.resgov.dao.IParamValid;
 import com.htsx.resgov.entity.XStepFields;
+import com.htsx.resgov.utils.ParamCheckingHelper;
 import com.htsx.resgov.utils.TagMapping;
 import com.huatai.xtrade.xstep.event.IXStepEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -20,6 +22,9 @@ public class ParamValid implements IParamValid, XStepFields {
 
     @Autowired
     TagMapping tagMapping;
+
+    @Autowired
+    ParamCheckingHelper paramCheckingHelper;
 
     //TODO
     public int getIndexCount() {
@@ -62,7 +67,7 @@ public class ParamValid implements IParamValid, XStepFields {
         switch (operationType) {
             case "delete": {
                 if (!existIndex)
-                //若不存在，也没必要进行索引列参数校验
+                    //若不存在，也没必要进行索引列参数校验
                     return false;
                 //存在则不需要参数类型校验
                 break;
@@ -156,74 +161,24 @@ public class ParamValid implements IParamValid, XStepFields {
     }
 
 
-    public String getTypesFromString(String fieldVal) {
-        String type = null;
-
-        return type;
-    }
-
-    public boolean isTypeRight(String fieldVal, String targetType) {
-        boolean isRight = false;
-
-        String curType = getTypesFromString(fieldVal);
-        String javaType = null;
-        switch (targetType) {
-            case "VARCHAR":
-            case "CHAR":
-                javaType = "String";
-                break;
-            case "DECIMAL":
-                javaType = "Double";
-                break;
-            case "INT":
-                javaType = "Int";
-                break;
-            default:
-                break;
-        }
-        if (!javaType.equalsIgnoreCase(curType)) {
-            isRight = false;
-        } else
-            isRight = true;
-
-
-        return isRight;
-    }
-
-    public boolean isSizeRight(String fieldVal, String size) {
-        boolean isRight = false;
-
-        return isRight;
-    }
-
-    public boolean isNullableRight(String fieldVal, String nullableLimit) {
-        boolean isRight = false;
-
-        return isRight;
-    }
 
     //just for one field
-//应该考虑操作类型
-    public boolean verifyField(String fieldVal, Map<String, String> schemasMap) {
-        boolean isRight = false;
 
+    public boolean verifyField(String fieldVal, Map<String, String> schemasMap) {
 
         String typeLimit = schemasMap.get("type");
         String sizeLimit = schemasMap.get("size");
         String nullableLimit = schemasMap.get("is_nullable");
 
         //验证是否为空
-        if (!isNullableRight(fieldVal, nullableLimit))
+        if (!paramCheckingHelper.isNullableRight(fieldVal, nullableLimit))
             return false;
         //验证类型
-        if (!isTypeRight(fieldVal, typeLimit))
-            return false;
         //验证大小
-        if (!isSizeRight(fieldVal, sizeLimit))
+        if (!paramCheckingHelper.isTypeAndSizeRight(fieldVal, typeLimit, sizeLimit))
             return false;
 
-
-        return isRight;
+        return true;
 
     }
 
