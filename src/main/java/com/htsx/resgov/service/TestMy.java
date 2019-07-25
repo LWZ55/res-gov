@@ -15,9 +15,6 @@ public class TestMy {
     public int insertTest(Integer id){
 
       User user = new User();
-
-
-
         return usermapper.insert(user);
     }
 }

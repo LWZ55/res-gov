@@ -14,6 +14,11 @@ public class PluginForUniqueKey  implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        //key
+        //反射key
+
+        //第一步：正则表达式匹配updatePrimaryKey方法
+        //更改
         return null;
     }
 

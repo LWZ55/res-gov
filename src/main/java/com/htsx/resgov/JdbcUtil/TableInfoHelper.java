@@ -1,5 +1,6 @@
 package com.htsx.resgov.JdbcUtil;
 
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
@@ -25,16 +26,19 @@ public class TableInfoHelper {
         return connection.getMetaData();
     }
 
-    //返回数据库表名（特定），null表示所有
-    public ArrayList<String> getTableNames(String tableNamePattern) throws Exception {
 
-        ArrayList<String> tableNamesList = new ArrayList<>();
+
+
+    //返回数据库的表名，null表示所有
+    public Set<String> getTableNames(String tableNamePattern) throws Exception {
+
+        HashSet<String> tableNamesSet = new HashSet<>();
         ResultSet rs = dbMetaData.getTables(null, null, tableNamePattern, new String[]{"TABLE"});
         while (rs.next()) {
-            tableNamesList.add(rs.getString("TABLE_NAME"));
+            tableNamesSet.add(rs.getString("TABLE_NAME"));
         }
 
-        return tableNamesList;
+        return tableNamesSet;
     }
 
 
@@ -55,6 +59,18 @@ public class TableInfoHelper {
         return fieldsSchemas;
     }
 
+    public Set<String> getTableAllColumns(String tableNamePattern) throws Exception {
+        Set<String> res = new HashSet<>();
+        ResultSet rs = dbMetaData.getColumns(null, "%", tableNamePattern, "%");
+        while (rs.next()) {
+            res.add(rs.getString("COLUMN_NAME").toLowerCase());
+        }
+        return res;
+    }
+
+
+
+
     //已知表名，列名，返回{约束字段：约束}
     public Map<String, String> getTableOneColumnSchemas(String tableNamePattern, String columnNamePattern) throws Exception {
         Map<String, String> fieldSchemas = new HashMap<>();
@@ -64,6 +80,8 @@ public class TableInfoHelper {
         fieldSchemas.put("type", rs.getString("TYPE_NAME"));
         fieldSchemas.put("size", rs.getString("COLUMN_SIZE"));
         fieldSchemas.put("remarks", rs.getString("REMARKS"));
+        fieldSchemas.put("decimalDigital", rs.getString("DECIMAL_DIGITS"));
+        fieldSchemas.put("default", rs.getString(" COLUMN_DEF"));
         fieldSchemas.put("is_nullable", rs.getString("IS_NULLABLE"));
 
 

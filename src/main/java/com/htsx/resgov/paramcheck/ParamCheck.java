@@ -3,19 +3,20 @@ package com.htsx.resgov.paramcheck;
 import com.htsx.resgov.JdbcUtil.TableInfoHelper;
 import com.htsx.resgov.dao.IParamValid;
 import com.htsx.resgov.entity.XStepFields;
-import com.htsx.resgov.utils.ParamCheckingHelper;
 import com.htsx.resgov.utils.TagMapping;
 import com.huatai.xtrade.xstep.event.IXStepEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 
 /**
- *
+ * TODO:总约束依赖注入
  */
-public class ParamValid implements IParamValid, XStepFields {
+
+@Component
+public class ParamCheck implements IParamValid, XStepFields {
 
     @Autowired
     TableInfoHelper tableInfoHelper;
@@ -26,10 +27,7 @@ public class ParamValid implements IParamValid, XStepFields {
     @Autowired
     ParamCheckingHelper paramCheckingHelper;
 
-    //TODO
-    public int getIndexCount() {
-        return 1;
-    }
+
 
 
     //只检验输入的字段
@@ -61,15 +59,27 @@ public class ParamValid implements IParamValid, XStepFields {
                                             String operationType, String tableName) throws Exception {
 
         //检验索引值是否存在
-        int indexCount = getIndexCount();
+
+        int indexCount = tagMapping.getIndexCount(getIndexMap(tableName),tableName);
         boolean existIndex = indexCount > 0 ? true : false;
         List<String> notAllowedNullFields = getNotAllowedNullFields(tableName);
+        if(operationType==null)
+            operationType="save";
         switch (operationType) {
             case "delete": {
                 if (!existIndex)
                     //若不存在，也没必要进行索引列参数校验
                     return false;
                 //存在则不需要参数类型校验
+                break;
+            }
+            case"insert":{
+                if (allowInsert(tagColumnMap, curRecordMap, tableName, existIndex, notAllowedNullFields))
+                    return false;
+                break;
+            }
+            case "update":{
+                if (allowUpdate(tagColumnMap, curRecordMap, tableName, existIndex)) return false;
                 break;
             }
             case "save": {
@@ -87,6 +97,7 @@ public class ParamValid implements IParamValid, XStepFields {
                 } else {
                     //更新校验
                 }
+                //检验Xstep消息提供的字段
                 if (!isCheckedByFieldsProvided(tagColumnMap, curRecordMap, tableName))
                     return false;
                 break;
@@ -100,13 +111,36 @@ public class ParamValid implements IParamValid, XStepFields {
     }
 
 
+    private boolean allowUpdate(Map<Integer, String> tagColumnMap, Map<Integer, String> curRecordMap, String tableName, boolean existIndex) throws Exception {
+        if(!existIndex)
+            return true;
+        else{
+            if (!isCheckedByFieldsProvided(tagColumnMap, curRecordMap, tableName))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean allowInsert(Map<Integer, String> tagColumnMap, Map<Integer, String> curRecordMap, String tableName, boolean existIndex, List<String> notAllowedNullFields) throws Exception {
+        if(existIndex)
+            return true;
+        else{
+            Collection<String> columnCol = tagColumnMap.values();
+            if (!columnCol.containsAll(notAllowedNullFields))
+                return true;
+            if (!isCheckedByFieldsProvided(tagColumnMap, curRecordMap, tableName))
+                return true;
+        }
+        return false;
+    }
+
+
     public List<String> getNotAllowedNullFields(String tableName) throws Exception {
         List<String> res = new ArrayList<>();
-        Map<String, Map<String, String>> fieldsSchemas = new HashMap<>();
-        fieldsSchemas = tableInfoHelper.getTableAllColumnsSchemas(tableName, "%");
+        Map<String, Map<String, String>> fieldsSchemas = tableInfoHelper.getTableAllColumnsSchemas(tableName, "%");
         Set<String> fieldSet = fieldsSchemas.keySet();
         for (String field : fieldSet) {
-            if (fieldsSchemas.get(field).get("is_nullable").equals(false))
+            if (fieldsSchemas.get(field).get("is_nullable").equals(false) && fieldsSchemas.get(field).get("default") == null)
                 res.add(field);
         }
         return res;
@@ -136,6 +170,8 @@ public class ParamValid implements IParamValid, XStepFields {
                     return false;
                 //第二步：根据操作类型验证
                 String operationType = curRecordMap.get(XStepFields.operationType);
+                if (!isCheckedByOperationType(tagColumnMap, curRecordMap, operationType, tableName))
+                    return false;
 
 
             }//else
@@ -149,17 +185,24 @@ public class ParamValid implements IParamValid, XStepFields {
 
 
     //TODO
+    //{列名，列值}
+    public Map<String,String> getIndexMap(String tableName){
+        Map<String,String> indexMap = new HashMap<>();
+        return  indexMap;
+    }
+
+
     public boolean existUniqueIndexFields(String tableName, Map<Integer, String> tagColumnMap) {
 
+
         //根据表名获得一个唯一索引，待完成
-        List<String> indexList = null;
+        Collection<String> indexList = getIndexMap(tableName).values();
         Collection<String> columnCol = tagColumnMap.values();
         if (columnCol.containsAll(indexList))
             return true;
         else
             return false;
     }
-
 
 
     //just for one field
@@ -169,13 +212,13 @@ public class ParamValid implements IParamValid, XStepFields {
         String typeLimit = schemasMap.get("type");
         String sizeLimit = schemasMap.get("size");
         String nullableLimit = schemasMap.get("is_nullable");
+        String decimalLimit = schemasMap.get("decimalDigital");
 
         //验证是否为空
         if (!paramCheckingHelper.isNullableRight(fieldVal, nullableLimit))
             return false;
-        //验证类型
-        //验证大小
-        if (!paramCheckingHelper.isTypeAndSizeRight(fieldVal, typeLimit, sizeLimit))
+        //验证类型和大小
+        if (!paramCheckingHelper.isTypeAndSizeRight(fieldVal, typeLimit, sizeLimit, decimalLimit))
             return false;
 
         return true;
