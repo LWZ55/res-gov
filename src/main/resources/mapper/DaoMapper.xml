@@ -8,6 +8,13 @@
          where Tag = #{tag} and TableName = #{tableName}
     </select>
 
+    <select id="getClassNameByClassId" resultType="java.lang.String" parameterType="java.lang.String">
+         select ClassName
+         from tablesinfo
+         where ClassId = #{classId}
+    </select>
+
+
     <resultMap type="com.htsx.resgov.entity.FieldInfo" id="paraMap">
         <id column="Id" property="id" jdbcType="INTEGER" javaType="Integer"/>
         <result column="ColumnName" property="columnName" jdbcType="VARCHAR" javaType="String"/>

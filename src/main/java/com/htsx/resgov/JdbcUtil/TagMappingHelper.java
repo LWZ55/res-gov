@@ -24,6 +24,10 @@ public class TagMappingHelper implements XStepFields {
         return  res;
     }
 
+    public String getClassNameByClassId(String classId){
+        String className = fieldMapper.getClassNameByClassId(classId);
+        return  className;
+    }
 
 
     public String getIndexCountSql(Map<String, String>indexMap,String tableName) {

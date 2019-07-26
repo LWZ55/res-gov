@@ -18,4 +18,6 @@ public interface FieldMapper {
     Integer selectBySql(SqlHelper sqlHelper);
 
     Set<FieldInfo> getFieldsInfo();
+
+    String getClassNameByClassId(String classId);
 }
