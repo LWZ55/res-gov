@@ -2,7 +2,7 @@ package com.htsx.resgov.paramcheck;
 
 import com.htsx.resgov.JdbcUtil.TableInfoHelper;
 import com.htsx.resgov.entity.XStepFields;
-import com.htsx.resgov.JdbcUtil.TagMappingHelper;
+import com.htsx.resgov.JdbcUtil.MappingHelper;
 import com.huatai.xtrade.xstep.event.IXStepEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class ParamCheck implements IParamCheck, XStepFields {
     @Autowired
     TableInfoHelper tableInfoHelper;
     @Autowired
-    TagMappingHelper tagMappingHelper;
+    MappingHelper mappingHelper;
     @Autowired
     FieldsCheckingHelper fieldsCheckingHelper;
 
@@ -43,9 +43,9 @@ public class ParamCheck implements IParamCheck, XStepFields {
         while (it.hasNext()) {
             HashMap<Integer, String> curRecordMap = it.next();
             String classId = curRecordMap.get(XStepFields.classId);
-            String tableName = tagMappingHelper.getTableNameBySysNameAndClassId(sysName, classId);
+            String tableName = mappingHelper.getTableNameBySysNameAndClassId(sysName, classId);
             //返回{tag：columnName}，只返回输入字段
-            Map<Integer, String> tagColumnMap = tagMappingHelper.getColumnsByTags(curRecordMap, sysName);
+            Map<Integer, String> tagColumnMap = mappingHelper.getColumnsByTags(curRecordMap, sysName);
             if (tagColumnMap == null)
                 return false;
             //第一步：验证记录里是否存在索引字段
@@ -95,7 +95,7 @@ public class ParamCheck implements IParamCheck, XStepFields {
                                             String operationType, String tableName) throws Exception {
 
         //检验索引值是否存在
-        int indexCount = tagMappingHelper.getIndexCount(getIndexMap(tableName), tableName);
+        int indexCount = mappingHelper.getIndexCount(getIndexMap(tableName), tableName);
         boolean existIndex = indexCount != 0 ? true : false;
         List<String> notAllowedNullFields = getNotAllowedNullFields(tableName);
         if (operationType == null)

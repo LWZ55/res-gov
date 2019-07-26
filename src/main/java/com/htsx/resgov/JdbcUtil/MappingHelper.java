@@ -14,17 +14,17 @@ import java.util.Set;
 
 
 @Component
-public class TagMappingHelper implements XStepFields {
+public class MappingHelper implements XStepFields {
 
     @Autowired
     FieldMapper fieldMapper;
 
-    public Set<FieldInfo> getFieldsInfo(){
-        Set<FieldInfo> res=fieldMapper.getFieldsInfo();
+    public Set<FieldInfo> getFieldsInfo(String tableName){
+        Set<FieldInfo> res=fieldMapper.getFieldsInfoByTableName(tableName);
         return  res;
     }
 
-    public String getClassNameByClassId(String classId){
+    public String getClassNameByClassId(Integer classId){
         String className = fieldMapper.getClassNameByClassId(classId);
         return  className;
     }

@@ -17,7 +17,7 @@ public interface FieldMapper {
 
     Integer selectBySql(SqlHelper sqlHelper);
 
-    Set<FieldInfo> getFieldsInfo();
+    Set<FieldInfo> getFieldsInfoByTableName(String tableName);
 
-    String getClassNameByClassId(String classId);
+    String getClassNameByClassId(Integer classId);
 }
