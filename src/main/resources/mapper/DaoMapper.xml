@@ -16,7 +16,7 @@
 
 
     <resultMap type="com.htsx.resgov.entity.FieldInfo" id="paraMap">
-        <id column="Id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="Id" property="id" jdbcType="INTEGER" javaType="Integer"/>
         <result column="ColumnName" property="columnName" jdbcType="VARCHAR" javaType="String"/>
         <result column="Tag"  property="tag"/>
         <result column="Type"  property="type"/>

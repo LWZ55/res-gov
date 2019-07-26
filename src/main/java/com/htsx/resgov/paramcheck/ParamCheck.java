@@ -1,6 +1,7 @@
 package com.htsx.resgov.paramcheck;
 
 import com.htsx.resgov.JdbcUtil.TableInfoHelper;
+import com.htsx.resgov.entity.SysInfo;
 import com.htsx.resgov.entity.XStepFields;
 import com.htsx.resgov.JdbcUtil.MappingHelper;
 import com.huatai.xtrade.xstep.event.IXStepEvent;
@@ -25,9 +26,10 @@ public class ParamCheck implements IParamCheck, XStepFields {
     FieldsCheckingHelper fieldsCheckingHelper;
 
 
+
     /**
      * 参数校验的主函数
-     *
+     * 静态代码
      * @param xStepEvent
      * @return
      * @throws Exception

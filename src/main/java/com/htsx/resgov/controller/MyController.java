@@ -44,7 +44,6 @@ public class MyController {
         System.out.println(mappingHelper.getColumnNameFromTagAndTableName("exchangeorder","1148"));
         System.out.println(jdbcTables.getTableAllColumns("exchangeorder").size());
 
-
         System.out.println(mappingHelper.getIndexCountBySql("select count(0) from fieldsinfo"));
 
 
@@ -57,16 +56,16 @@ public class MyController {
 
     }
 
-    @RequestMapping("user/users")
+    @RequestMapping("/user/users")
     @ResponseBody
     public Response<List<UserTest>> getList() {
         List<UserTest> list = new ArrayList<>();
         for(int i=0;i<3;i++) {
             list.add(UserTest.fakeUser(i));
         }
-        //new PrintTest().test();
         return new Response<>(0, list);
     }
+
     @RequestMapping("/index")
     @ResponseBody
     public Map<String, List<String>> out1() throws  Exception{

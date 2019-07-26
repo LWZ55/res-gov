@@ -5,7 +5,6 @@ import com.htsx.resgov.entity.SqlHelper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 @Mapper

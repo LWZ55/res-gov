@@ -9,7 +9,7 @@ import lombok.Data;
 public class FieldInfo {
 
 
-   // private Integer id;
+    private Integer id;
     private String columnName;
     private Integer tag;
     private String type;
