@@ -2,14 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.htsx.resgov.dao.FieldMapper">
     <!--    namespace对应接口-->
-    <!-- 根据主键查询-->
-    <select id="getByTableNameAndTag" resultType="java.lang.String" parameterType="map">
+    <select id="getColumnNameByTableNameAndTag" resultType="java.lang.String" parameterType="map">
          select ColumnName
          from fieldsinfo
          where Tag = #{tag} and TableName = #{tableName}
     </select>
 
-    <select id="getBySysNameAndClassId" resultType="java.lang.String" parameterType="map">
+    <resultMap type="com.htsx.resgov.entity.FieldInfo" id="paraMap">
+        <id column="Id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="ColumnName" property="columnName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="Tag"  property="tag"/>
+        <result column="Type"  property="type"/>
+        <result column="Length" property="length"/>
+        <result column="Comment" property="comment"/>
+        <result column="SampleValue"  property="sampleValue"/>
+        <result column="TableName" property="tableName"/>
+    </resultMap>
+
+
+
+    <select id="getFieldsInfo" resultMap="paraMap" >
+         select *
+         from fieldsinfo
+    </select>
+
+
+    <select id="getTableNameBySysNameAndClassId" resultType="java.lang.String" parameterType="map">
          select TableName
          from tablesinfo
          where ClassId = #{classId} and SystemName = #{sysName}

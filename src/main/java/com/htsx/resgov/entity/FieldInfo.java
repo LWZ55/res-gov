@@ -1,15 +1,19 @@
 package com.htsx.resgov.entity;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
 public class FieldInfo {
-    private String name;
+
+
+    private Integer id;
+    private String columnName;
     private Integer tag;
     private String type;
-    private String length;
+    private Integer length;
     private String comment;
     private String sampleValue;
     private String tableName;

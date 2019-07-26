@@ -1,6 +1,7 @@
-package com.htsx.resgov.utils;
+package com.htsx.resgov.JdbcUtil;
 
 import com.htsx.resgov.dao.FieldMapper;
+import com.htsx.resgov.entity.FieldInfo;
 import com.htsx.resgov.entity.SqlHelper;
 import com.htsx.resgov.entity.XStepFields;
 import org.junit.Test;
@@ -13,11 +14,17 @@ import java.util.Set;
 
 
 @Component
-public class TagMapping implements XStepFields {
-
+public class TagMappingHelper implements XStepFields {
 
     @Autowired
     FieldMapper fieldMapper;
+
+    public Set<FieldInfo> getFieldsInfo(){
+        Set<FieldInfo> res=fieldMapper.getFieldsInfo();
+        return  res;
+    }
+
+
 
     public String getIndexCountSql(Map<String, String>indexMap,String tableName) {
 
@@ -52,41 +59,50 @@ public class TagMapping implements XStepFields {
         return fieldMapper.selectBySql(new SqlHelper(sql));
     }
 
+
     public  String getTableNameBySysNameAndClassId(String sysName,String classId) {
         String tableName;
         HashMap<String, String> param = new HashMap<>();
         param.put("sysName", sysName);
         param.put("classId", classId);
-        tableName = fieldMapper.getBySysNameAndClassId(param);
+        tableName = fieldMapper.getTableNameBySysNameAndClassId(param);
         return tableName;
     }
 
 
-
-    //确保能获取tableName再执行
-    //return {tag,fields}
-    //
-    public  Map<Integer, String> getColumnsByTags(String tableName,HashMap<Integer, String> oneRecordMap) {
-        Set<Integer> tagSet = oneRecordMap.keySet();
+    /**
+     * 系统名，表名，tag号——>列名
+     * @param curRecordMap
+     * @param sysName
+     * @return  {tag,columnName}
+     */
+    public  Map<Integer, String> getColumnsByTags(HashMap<Integer, String> curRecordMap,String sysName) {
+        String tableName;
+        String classId = curRecordMap.get(XStepFields.classId);
+        tableName = getTableNameBySysNameAndClassId(sysName, classId);
+        if (tableName == null)
+            return null;
+        Set<Integer> tagSet = curRecordMap.keySet();
         Map<Integer, String> res = new HashMap<>();
 
         //结构化查询
         for (Integer tag : tagSet) {
             //查找到对应的field
             if (tag != XStepFields.operationType && tag != XStepFields.classId)
-                res.put(tag, getColumnFromTagAndTableName(tableName,tag.toString()));
+                res.put(tag, getColumnNameFromTagAndTableName(tableName,tag.toString()));
         }
         return res;
 
     }
 
-    public String getColumnFromTagAndTableName(String tableName, String tag) {
+
+    public String getColumnNameFromTagAndTableName(String tableName, String tag) {
         String columnName;
         HashMap<String, String> param = new HashMap<>();
         param.put("tableName", tableName);
         param.put("tag", tag);
         //若找不到，则返回null
-        columnName = fieldMapper.getByTableNameAndTag(param);
+        columnName = fieldMapper.getColumnNameByTableNameAndTag(param);
         return columnName;
     }
 

@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 
 @Component
-public class ParamCheckingHelper {
+public class FieldsCheckingHelper {
 
 
     public boolean isNullableRight(String fieldVal, String nullableLimit) {
@@ -17,7 +17,14 @@ public class ParamCheckingHelper {
             return true;
     }
 
-    //targetType均为大写
+    /**\
+     * 要求targetType均为大写
+     * @param fieldVal
+     * @param targetType
+     * @param sizeLimit
+     * @param decimalLimit
+     * @return
+     */
     public boolean isTypeAndSizeRight(String fieldVal, String targetType, String sizeLimit, String decimalLimit) {
         boolean isRight = false;
         int size = Integer.valueOf(sizeLimit);
@@ -34,14 +41,11 @@ public class ParamCheckingHelper {
                 isRight = isIntTypeSize(fieldVal, size);
                 break;
             case "TIMESTAMP":
-                isRight = isTimeStampTypeSize(fieldVal, size);
+                isRight = isTimeStampTypeSize(fieldVal);
             default:
                 break;
         }
-
         return isRight;
-
-
     }
 
     private boolean isStringTypeSize(String fieldVal, int sizeLimit) {
@@ -50,9 +54,12 @@ public class ParamCheckingHelper {
         return true;
     }
 
-    //返回数组，{总长度，小数位长度}
+    /**
+     * 返回数组，{总长度，小数位长度}
+     * @param number
+     * @return
+     */
     public int[] getNumberDigits(String number) {
-
         int[] counts = new int[]{0, 0};
         String[] num = number.split("\\.");
         System.out.println(Arrays.asList(num));
@@ -64,10 +71,14 @@ public class ParamCheckingHelper {
     }
 
 
-    //0也认为是小数和整数位数
+    /**
+     * 0也认为是小数和整数位数
+     * @param fieldVal
+     * @param sizeLimit
+     * @param decimalLimit
+     * @return
+     */
     public boolean isDoubleTypeSize(String fieldVal, int sizeLimit, int decimalLimit) {
-
-
         if (fieldVal != null) {
             try {
                 Double.parseDouble(fieldVal);
@@ -79,24 +90,20 @@ public class ParamCheckingHelper {
                 return false;
             if (counts[1] > decimalLimit)
                 return false;
-
         }
         return true;
-
     }
 
     public boolean isIntTypeSize(String fieldVal, int size) {
 
         if (fieldVal == null)
             return true;
-
         if (size > 10) {
             try {
                 Long.parseLong(fieldVal);
             } catch (NumberFormatException e) {
                 return false;
             }
-
         } else {
             try {
                 Integer.parseInt(fieldVal);
@@ -108,6 +115,17 @@ public class ParamCheckingHelper {
     }
 
 
+    public boolean isTimeStampTypeSize(String fieldVal) {
+        if (fieldVal != null) {
+            try {
+                Long.parseLong(fieldVal);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Test
     public void test() {
         System.out.println(isDoubleTypeSize("0.0", 5, 2));
@@ -116,19 +134,4 @@ public class ParamCheckingHelper {
         System.out.println(isDoubleTypeSize("1.123", 5, 2));
         //System.out.println(getNumberDecimalDigits(".111110"));
     }
-
-
-    public boolean isTimeStampTypeSize(String fieldVal, int sizeLimit) {
-        if (fieldVal != null) {
-            try {
-                Long.parseLong(fieldVal);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
 }

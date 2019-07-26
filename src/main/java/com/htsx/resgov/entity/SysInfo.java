@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SysInfo {
-    private Integer sysId;
+    private Integer id;
     private String sysType;
 }
